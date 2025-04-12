@@ -27,4 +27,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+// L?y c?ng t? bi?n môi tr??ng PORT do Render cung c?p, m?c ??nh là 10000 n?u không có
+var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
+app.Run($"http://0.0.0.0:{port}");
