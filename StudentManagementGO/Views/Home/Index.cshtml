@@ -1,0 +1,181 @@
+﻿@model StudentManagementGO.Models.StudentScore
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="card">
+    <h3><i class="fas fa-user-graduate"></i> Student Search</h3>
+    
+    @if (!ViewBag.IsDataLoaded)
+    {
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <p>No exam data is loaded in the database. Please load the data first.</p>
+            <form id="loadDataForm" asp-action="LoadData" method="post">
+                <button type="submit" class="btn btn-secondary">
+                    <i class="fas fa-database"></i> Load Data from CSV
+                </button>
+                <div id="loadLoading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading data... This may take a few minutes.</p>
+                </div>
+            </form>
+        </div>
+    }
+    else
+    {
+        <form id="searchForm" asp-action="Index" method="post">
+            <div class="form-group">
+                <label for="registrationNumber">Registration Number:</label>
+                <input type="text" class="form-control" id="registrationNumber" name="registrationNumber" 
+                       placeholder="Enter Registration Number" value="@ViewBag.RegistrationNumber" required />
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Search
+            </button>
+            <div id="searchLoading" class="loading">
+                <div class="spinner"></div>
+                <p>Searching...</p>
+            </div>
+        </form>
+    }
+</div>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i> @ViewBag.ErrorMessage
+    </div>
+}
+
+@if (Model != null)
+{
+    <div class="card">
+        <h3><i class="fas fa-graduation-cap"></i> Detailed Scores</h3>
+        
+        <div class="student-info">
+            <p><strong>Registration Number:</strong> @Model.RegistrationNumber</p>
+        </div>
+        
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Score</th>
+                        <th>Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Math.HasValue)
+                    {
+                        <tr>
+                            <td>Mathematics</td>
+                            <td>@Model.Math.Value.ToString("F2")</td>
+                            <td>@GetScoreLevel(Model.Math.Value)</td>
+                        </tr>
+                    }
+                    @if (Model.Literature.HasValue)
+                    {
+                        <tr>
+                            <td>Literature</td>
+                            <td>@Model.Literature.Value.ToString("F2")</td>
+                            <td>@GetScoreLevel(Model.Literature.Value)</td>
+                        </tr>
+                    }
+                    @if (Model.ForeignLanguage.HasValue)
+                    {
+                        <tr>
+                            <td>Foreign Language @(Model.ForeignLanguageCode != null ? $"({Model.ForeignLanguageCode})" : "")</td>
+                            <td>@Model.ForeignLanguage.Value.ToString("F2")</td>
+                            <td>@GetScoreLevel(Model.ForeignLanguage.Value)</td>
+                        </tr>
+                    }
+                    @if (Model.Physics.HasValue)
+                    {
+                        <tr>
+                            <td>Physics</td>
+                            <td>@Model.Physics.Value.ToString("F2")</td>
+                            <td>@GetScoreLevel(Model.Physics.Value)</td>
+                        </tr>
+                    }
+                    @if (Model.Chemistry.HasValue)
+                    {
+                        <tr>
+                            <td>Chemistry</td>
+                            <td>@Model.Chemistry.Value.ToString("F2")</td>
+                            <td>@GetScoreLevel(Model.Chemistry.Value)</td>
+                        </tr>
+                    }
+                    @if (Model.Biology.HasValue)
+                    {
+                        <tr>
+                            <td>Biology</td>
+                            <td>@Model.Biology.Value.ToString("F2")</td>
+                            <td>@GetScoreLevel(Model.Biology.Value)</td>
+                        </tr>
+                    }
+                    @if (Model.History.HasValue)
+                    {
+                        <tr>
+                            <td>History</td>
+                            <td>@Model.History.Value.ToString("F2")</td>
+                            <td>@GetScoreLevel(Model.History.Value)</td>
+                        </tr>
+                    }
+                    @if (Model.Geography.HasValue)
+                    {
+                        <tr>
+                            <td>Geography</td>
+                            <td>@Model.Geography.Value.ToString("F2")</td>
+                            <td>@GetScoreLevel(Model.Geography.Value)</td>
+                        </tr>
+                    }
+                    @if (Model.CivicEducation.HasValue)
+                    {
+                        <tr>
+                            <td>Civic Education</td>
+                            <td>@Model.CivicEducation.Value.ToString("F2")</td>
+                            <td>@GetScoreLevel(Model.CivicEducation.Value)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else if (ViewBag.IsDataLoaded)
+{
+    <div class="card">
+        <h3><i class="fas fa-info-circle"></i> Detailed Scores</h3>
+        <p>No data to display. Please enter a registration number to search for scores.</p>
+    </div>
+}
+
+@functions {
+    string GetScoreLevel(double score)
+    {
+        if (score >= 8)
+            return "<span class='score-excellent'>Excellent</span>";
+        else if (score >= 6)
+            return "<span class='score-good'>Good</span>";
+        else if (score >= 4)
+            return "<span class='score-average'>Average</span>";
+        else
+            return "<span class='score-below'>Below Average</span>";
+    }
+}
