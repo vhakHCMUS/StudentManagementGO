@@ -18,4 +18,5 @@ RUN dotnet publish "./StudentManagementGO.csproj" -c $BUILD_CONFIGURATION -o /ap
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY diem_thi_thpt_2024.csv /app/  
 ENTRYPOINT ["dotnet", "StudentManagementGO.dll"]

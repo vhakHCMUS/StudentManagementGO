@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.windows
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./data:C:/app/data
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    networks:
+      - g-scores-network
+
+networks:
+  g-scores-network:
+    driver: nat 
